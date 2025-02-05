@@ -11,7 +11,6 @@ export const createBlogService = async ({title, content,user_id})=>{
     const blog = await Blog.create({
         title,
         content,
-        author : user_id.name || "Anonymous",
         user_id,
     });
     await blog.save();

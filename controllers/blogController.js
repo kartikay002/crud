@@ -8,8 +8,8 @@ export const getAllBlog = async(req,res ) => {
 }
 
 export const createBlog = async(req,res) =>{
-    const{title,content,author} = req.body;
-    if(!title||!content||!author){
+    const{title,content} = req.body;
+    if(!title||!content){
         return res.status(400).json({message : "missings fields"})
     }
 

@@ -1,9 +1,9 @@
 import User from "../models/user.js"
 import bcrypt from "bcrypt";
 import { ErrorResponse } from "../helpers/errorResponse.js";
-import { userRegistrationService, loginUserService, userlogoutService } from "../sevices/authServices.js";
+import { userRegistrationService, loginUserService, userLogoutService } from "../sevices/authServices.js";
 import jwt from "jsonwebtoken";
-import cookieOptions from "../middleware/authMiddleware.js"
+import { sendToken} from "../middleware/authMiddleware.js"
 
 
 
@@ -25,23 +25,16 @@ import cookieOptions from "../middleware/authMiddleware.js"
                 //return ErrorResponse.badRequest(res,error.message)
                 return res.status(400).json({message:"user already exist"})
             }
+
+            // Hash the password
             const hashedPassword = await bcrypt.hash(password,10)
 
-           // Create a new user
+            
+           // Register new user
             const user = await userRegistrationService({name,email,password:hashedPassword})
 
-            //assigning token
-            const token = jwt.sign({_id:user._id},
-                process.env.ACCESS_TOKEN_SECRET);
-
-            
-           return res.status(200).cookie("blogsToken",token,cookieOptions).json({
-            success:true,
-            user,
-            message:"created"
-        });
-            // Respond with the created user data and a token
-            //sendToken(res,user,201,"registration succesful")
+            const token = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h"});
+           return sendToken(res,user,201,"registration succesful")
             
         }catch(error){
             return ErrorResponse.internalServerError(res,error.message)
@@ -57,17 +50,22 @@ import cookieOptions from "../middleware/authMiddleware.js"
            {
             return ErrorResponse.badRequest(res,{message:"please enter both fields"})
            }
-           // if user exist
+           // if user exist(Authenticate the user)
            const user = await loginUserService({email,password});
-           return res.status(200).json({user,message:"created"})
-           //sendToken(res,user,200,`hello , ${User.name}`)
+
+           //assign token
+           const token = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h"});
+           //Send token response
+           return sendToken(res,user,200,`hello , ${user.name}`,token)
+
+            //return res.status(200).json({user,message:"created"})
         }catch (error) {
             return ErrorResponse.internalServerError(res,error.message)
         }
 
     }
 
-    //logout user
+    //USER LOGOUT
     export const logoutUser = async(req,res )=>{
         try {
             const {success,message,cookieOptions:newCookieOptions} = await userLogoutService();

@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken'; // Import jwt if not already imported
-import dotenv from "dotenv";
+//import dotenv from "dotenv";
 import { ErrorResponse } from '../helpers/errorResponse.js';
-dotenv.config();
+//dotenv.config();
 
-
+/*
 export const validateToken = async(req,res,next) => {
     const token = req.cookies["blogsToken"];
     console.log(token)
@@ -14,17 +14,30 @@ export const validateToken = async(req,res,next) => {
     req.user = decoded_data._id;
     next();
 }
-
+*/
 //cookie creation
 
-const  cookieOptions ={
+
+export const  cookieOptions ={
     maxAge : 24*60*60*1000,
     sameSite : "none",
-    httpOnly: true,
+    httpOnly: true,  //prevents client-side access
   }
-export default cookieOptions;
+  
+export const sendToken = (res,user,code,message,token) => {  
+    return res.status(code).cookie("blogsToken",token, cookieOptions).json({
+        status : true,
+        user:{
+            id: user_id,
+            name:user.name,
+            email:user.email,
 
-/*
+        },
+        statusCode:code,
+        message,
+    });
+  }
+
 export const validateToken = async (req, res, next) => {
     let token;
     const authHeader = req.headers.Authorization || req.headers.authorization;
@@ -44,7 +57,7 @@ export const validateToken = async (req, res, next) => {
         return ErrorResponse.unauthorized(res,{ message: "Token missing or incorrect format" });
     }
 }
-*/
+
 
 
 

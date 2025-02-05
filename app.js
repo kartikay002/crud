@@ -1,5 +1,4 @@
 import express from "express";
-import dotenv from "dotenv";
 import { authRouter } from "./router/authRoutes.js";
 import blogRouter from "./router/blogRoutes.js";
 import { connectDB } from "./config/db.js";
@@ -9,7 +8,6 @@ const app = express();
 app.use(express.json());
 //url encoded
 app.use(express.urlencoded({extented:true}))
-dotenv.config()
 app.get('/',(req,res) =>{
     console.log("CRUD blogs API")
 })

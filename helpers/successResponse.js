@@ -1,24 +1,4 @@
 
-import jwt from "jsonwebtoken";
-
-export const  cookieOptions ={
-  maxAge : 24*60*60*1000,
-  sameSite : "none",
-  httpOnly: true,
-}
-
-export const sendToken = (res,user,code,message) => {
-  const token = jwt.sign({ id: user._id }, 
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '5m' });
-
-  return res.status(code).cookie("blogsToken",token, cookieOptions).json({
-      status : true,
-      statusCode:code,
-      message,
-  });
-}
-  
 export class SuccessResponse {
     constructor(data, message = 'Success', statusCode = 200) {
       this.success = true;
