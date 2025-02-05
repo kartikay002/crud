@@ -3,18 +3,6 @@ import jwt from 'jsonwebtoken'; // Import jwt if not already imported
 import { ErrorResponse } from '../helpers/errorResponse.js';
 //dotenv.config();
 
-/*
-export const validateToken = async(req,res,next) => {
-    const token = req.cookies["blogsToken"];
-    console.log(token)
-    if(!token){
-        return res.status(400).json({message:"token not found"});
-    }
-    const decoded_data = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET);
-    req.user = decoded_data._id;
-    next();
-}
-*/
 //cookie creation
 
 
@@ -25,6 +13,7 @@ export const  cookieOptions ={
   }
   
 export const sendToken = (res,user,code,message,token) => {  
+    const token = jwt.sign({_id: user._id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h"});
     return res.status(code).cookie("blogsToken",token, cookieOptions).json({
         status : true,
         user:{
